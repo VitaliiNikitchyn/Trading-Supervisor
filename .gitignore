@@ -1,0 +1,8 @@
+/build/
+/libs/
+/app.iml
+/proguard-rules.pro
+/src/main/res/mipmap*
+/src/main/res/values/keys.xml
+/src/test/
+/src/androidTest/
