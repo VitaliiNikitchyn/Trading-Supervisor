@@ -17,6 +17,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -30,6 +31,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tradingsupervisor.R;
@@ -133,7 +135,8 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_camera, container, false);
+        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        return view;
     }
 
     @Override
@@ -148,9 +151,24 @@ public class CameraFragment extends Fragment {
             }
         });
 
+        final TextView timerView = view.findViewById(R.id.textView_timer);
+        final CountDownTimer timer = new CountDownTimer(16000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                timerView.setText(Long.toString(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                getActivity().finish();
+            }
+        };
+        timer.start();
+
+
         view.findViewById(R.id.btn_show_preview).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                timer.cancel();
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.photo_activity_container, PhotoPreviewFragment.newInstance())
                         .addToBackStack(null)
@@ -343,10 +361,5 @@ public class CameraFragment extends Fragment {
             return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
                     (long) rhs.getWidth() * rhs.getHeight());
         }
-    }
-
-    public interface CameraFragmentListener {
-        void onCancel();
-        void onShowPreview();
     }
 }
